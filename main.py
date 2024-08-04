@@ -1,6 +1,8 @@
 import re
 import statistics
 from collections import Counter
+import psycopg2
+import random
 
 
 def read_html_file(path_to_html_file):
@@ -40,7 +42,7 @@ def get_median_colour(colours):
 def get_variance(colours):
     colour_count = Counter(colours)
     colour_frequencies = list(colour_count.values())
-    print(colours)
+    print(colour_frequencies)
     variance = statistics.variance(colour_frequencies)
     return variance
 
@@ -52,6 +54,51 @@ def get_colour_probability(colours, colour):
     total_colours = len(colours)
     colour_probability = x_colour_count / total_colours
     return f"{colour_probability:.4f}"
+
+
+def save_to_postgresql(colours):
+    colour_count = Counter(colours)
+    try:
+        conn = psycopg2.connect(
+            dbname="your_database",
+            user="your_username",
+            password="your_password",
+            host="your_host"
+        )
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS colour_frequencies (colour VARCHAR(50) PRIMARY KEY, frequency 
+        INTEGER)""")
+        for colour, frequency in colour_count.items():
+            cur.execute("INSERT INTO color_frequencies (color, frequency) VALUES (%s, %s) ON CONFLICT (color) DO "
+                        "UPDATE SET frequency = excluded.frequency", (colour, frequency))
+        conn.commit()
+    except Exception as e:
+        print(f"Error saving to PostgreSQL: {e}")
+    finally:
+        if conn:
+            cur.close()
+            conn.close()
+
+
+def recursive_search(lis, size, key):
+    if size == 0:
+        return False
+    if lis[size - 1] == key:
+        return lis[size - 1]
+    return recursive_search(lis, size - 1, key)
+
+
+def convert_to_decimal():
+    binary = ''.join(random.choice('01') for _ in range(4))
+    decimal = int(binary, 2)
+    return decimal
+
+
+def fibonacci_sum(n):
+    fib = [0, 1]
+    for i in range(2, n):
+        fib.append(fib[i - 1] + fib[i - 2])
+    return sum(fib[:n])
 
 
 HTML_FILE_PATH = 'python_class_question.html'
@@ -75,3 +122,17 @@ print(variance)
 
 colour_probability = get_colour_probability(colours, 'RED')
 print(colour_probability)
+
+# save_to_postgresql(colours)
+
+decimal = convert_to_decimal()
+print(decimal)
+
+search = recursive_search([1, 2, 3, 4, 5], 5, 3)
+print(search)
+
+sum_of_fibonacci = fibonacci_sum(50)
+print(sum_of_fibonacci)
+
+
+
