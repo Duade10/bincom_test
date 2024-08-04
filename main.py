@@ -1,8 +1,13 @@
+import os
+import random
 import re
 import statistics
 from collections import Counter
+
 import psycopg2
-import random
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def read_html_file(path_to_html_file):
@@ -12,7 +17,7 @@ def read_html_file(path_to_html_file):
 
 
 def extract_colours(html_content):
-    colours = re.findall(r'\b[A-Z]+\b', html_content)
+    colours = re.findall(r'\b(GREEN|YELLOW|BROWN|BLUE|PINK|ORANGE|CREAM|RED|WHITE|ARSH|BLEW|BLACK)\b', html_content)
     colours = [colour for colour in colours if
                colour not in ['DAY', 'COLOURS', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']]
     return colours
@@ -60,16 +65,16 @@ def save_to_postgresql(colours):
     colour_count = Counter(colours)
     try:
         conn = psycopg2.connect(
-            dbname="your_database",
-            user="your_username",
-            password="your_password",
-            host="your_host"
+            dbname=os.getenv("DB_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
         )
         cur = conn.cursor()
         cur.execute("""CREATE TABLE IF NOT EXISTS colour_frequencies (colour VARCHAR(50) PRIMARY KEY, frequency 
         INTEGER)""")
         for colour, frequency in colour_count.items():
-            cur.execute("INSERT INTO color_frequencies (color, frequency) VALUES (%s, %s) ON CONFLICT (color) DO "
+            cur.execute("INSERT INTO colour_frequencies (colour, frequency) VALUES (%s, %s) ON CONFLICT (colour) DO "
                         "UPDATE SET frequency = excluded.frequency", (colour, frequency))
         conn.commit()
     except Exception as e:
@@ -123,7 +128,7 @@ print(variance)
 colour_probability = get_colour_probability(colours, 'RED')
 print(colour_probability)
 
-# save_to_postgresql(colours)
+save_to_postgresql(colours)
 
 decimal = convert_to_decimal()
 print(decimal)
@@ -133,6 +138,3 @@ print(search)
 
 sum_of_fibonacci = fibonacci_sum(50)
 print(sum_of_fibonacci)
-
-
-
