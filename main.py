@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 import re
@@ -6,6 +7,9 @@ from collections import Counter
 
 import psycopg2
 from dotenv import load_dotenv
+
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -111,30 +115,39 @@ HTML_FILE_PATH = 'python_class_question.html'
 html_content = read_html_file(HTML_FILE_PATH)
 
 colours = extract_colours(html_content)
-print(colours)
 
+# 1. Which color of shirt is the mean color?
 mean_colour = get_mean_colour(colours)
-print(mean_colour)
+logger.info(f"1. Mean color: {mean_colour}")
 
+# 2. Which color is mostly worn throughout the week?
 most_worn = get_most_worn(colours)
-print(most_worn)
+logger.info(f"2. Most worn: {most_worn}")
 
+# 3. Which color is the median?
 median_colour = get_median_colour(colours)
-print(median_colour)
+logger.info(f"3. Median: {median_colour}")
 
+# 4. BONUS Get the variance of the colors
 variance = get_variance(colours)
-print(variance)
+logger.info(f"4. Variance: {variance}")
 
+# 5. BONUS if a colour is chosen at random, what is the probability that the color is red?
 colour_probability = get_colour_probability(colours, 'RED')
-print(colour_probability)
+logger.info(f"5. Probability of RED: {colour_probability}")
 
+# 6. Save the colours and their frequencies in postgresql database
 save_to_postgresql(colours)
+logger.info(f"6. Colours and their frequencies are saved to PostgreSQL")
 
+# 7. BONUS write a recursive searching algorithm to search for a number entered by user in a list of numbers.
 decimal = convert_to_decimal()
-print(decimal)
+logger.info(f"7. Decimal: {decimal}")
 
+# 8. Write a program that generates random 4 digits number of 0s and 1s and convert the generated number to base 10.
 search = recursive_search([1, 2, 3, 4, 5], 5, 3)
-print(search)
+logger.info(f"8. Search: {search}")
 
+# 9. Write a program to sum the first 50 fibonacci sequence.
 sum_of_fibonacci = fibonacci_sum(50)
-print(sum_of_fibonacci)
+logger.info(f"9. Sum of Fibonacci: {sum_of_fibonacci}")
