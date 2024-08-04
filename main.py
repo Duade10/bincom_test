@@ -36,14 +36,12 @@ def get_mean_colour(colours):
 
 def get_most_worn(colours):
     colour_count = Counter(colours)
-    print(colour_count)
     most_worn = colour_count.most_common(1)[0][0]
     return most_worn
 
 
 def get_median_colour(colours):
     sorted_colours = sorted(colours)
-    print(sorted_colours)
     median_colour = sorted_colours[len(sorted_colours) // 2]
     return median_colour
 
@@ -51,7 +49,6 @@ def get_median_colour(colours):
 def get_variance(colours):
     colour_count = Counter(colours)
     colour_frequencies = list(colour_count.values())
-    print(colour_frequencies)
     variance = statistics.variance(colour_frequencies)
     return variance
 
@@ -82,7 +79,7 @@ def save_to_postgresql(colours):
                         "UPDATE SET frequency = excluded.frequency", (colour, frequency))
         conn.commit()
     except Exception as e:
-        print(f"Error saving to PostgreSQL: {e}")
+        logger.error(f"Error saving to PostgreSQL: {e}")
     finally:
         if conn:
             cur.close()
