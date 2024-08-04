@@ -45,6 +45,15 @@ def get_variance(colours):
     return variance
 
 
+def get_colour_probability(colours, colour):
+    colour = colour.upper()
+    colour_count = Counter(colours)
+    x_colour_count = colour_count[colour]
+    total_colours = len(colours)
+    colour_probability = x_colour_count / total_colours
+    return f"{colour_probability:.4f}"
+
+
 HTML_FILE_PATH = 'python_class_question.html'
 
 html_content = read_html_file(HTML_FILE_PATH)
@@ -63,3 +72,6 @@ print(median_colour)
 
 variance = get_variance(colours)
 print(variance)
+
+colour_probability = get_colour_probability(colours, 'RED')
+print(colour_probability)
