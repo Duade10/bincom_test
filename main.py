@@ -17,7 +17,7 @@ def extract_colours(html_content):
 
 def get_mean_colour(colours):
     colour_count = Counter(colours)
-    colour_frequency = sum(colour_count.values() / len(colour_count))
+    colour_frequency = sum(colour_count.values()) / len(colour_count)
     mean_colour = min(colour_count, key=lambda x: abs(colour_count[x] - colour_frequency))
     return mean_colour
 
